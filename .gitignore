@@ -1,0 +1,49 @@
+# General
+.vscode/
+.idea/
+*.log
+*.venv
+.env
+.env.local
+.DS_Store
+node_modules/
+dist/
+build/
+coverage/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python / Django
+venv/
+.env
+db.sqlite3
+media/
+staticfiles/
+*.sqlite3
+celerybeat-schedule
+
+# React / Frontend
+node_modules/
+public/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+*.cache
+
+# Logs & Debug
+logs/
+*.log
+debug.log
+
+# OS-specific files
+Thumbs.db
+.DS_Store
+
+# Docker
+docker-compose.override.yml
+*.pid
+
+
