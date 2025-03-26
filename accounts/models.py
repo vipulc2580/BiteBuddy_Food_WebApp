@@ -102,6 +102,8 @@ class UserProfile(models.Model):
     modified_at=models.DateTimeField(auto_now=True, auto_now_add=False)
 
 
+    def full_address(self):
+        return f'{self.address_1}, {self.address_2}'
 
     def __str__(self):
         return f"{self.user},{self.state},{self.country},{self.city}"

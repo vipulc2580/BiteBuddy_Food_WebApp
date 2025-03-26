@@ -1,0 +1,20 @@
+{% autoescape off %}
+Hi {{ user.username }},
+{% if is_approved %}
+<h3>Congratulations! Your restaurant has been approved by BiteBuddy</h3>
+<p>We welcome you to BiteBuddy MarketPlace ,now you can host your menu,we will help you in every way<br>
+ possible to get more customers.
+</p>
+{% else %}
+<h3>We're sorry you are not eligible for publishing your food menu on our marketplace.</h3>
+<p>Your restaurant is not following BiteBuddy Rules and Regulations as this is against our values.<br>
+We want our customers and marketplace to have the best experience in terms of food and service.
+<br>
+Our Agent will meet you to further carry on this discussion or contact 
+<br>
+For more Info contact us at bitebuddysupport@gmail.com
+<br>
+Thank you!
+</p>
+{% endif %}
+{% endautoescape %}
