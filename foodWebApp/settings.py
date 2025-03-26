@@ -61,7 +61,7 @@ ROOT_URLCONF = 'foodWebApp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -154,3 +154,12 @@ MESSAGE_TAGS = {
     messages.WARNING: 'warning',
     messages.ERROR: 'danger',  # Default is 'error', but you changed it to 'danger'
 }
+
+
+# email configuration
+EMAIL_HOST=config('email_host')
+EMAIL_PORT=config('email_port',cast=int)
+EMAIL_HOST_USER=config('email_user')
+EMAIL_HOST_PASSWORD=config('email_passkey')
+EMAIL_USE_TLS=True 
+DEFAULT_FROM_EMAIL=config('default_from_email')
