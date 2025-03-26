@@ -19,9 +19,13 @@ from django.urls import path,include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls import handler403
+from accounts.views import custom_403_view
+
+handler403 = custom_403_view
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls,name='admin'),
     path('',views.home,name='home'),
     path('accounts/',include('accounts.urls')),
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
