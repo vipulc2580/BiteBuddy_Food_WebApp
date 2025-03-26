@@ -1,0 +1,46 @@
+{% load static %}
+<div class="wrapper">
+<header id="header">
+    <div class="main-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+                    <div class="logo">
+                        <figure>
+                            <a href="{% url 'home'%}" class="light-logo">
+                                <img src="{% static 'assets/extra-images/main-logo.png'%}" alt="FoodBakery">
+                            </a>
+                        </figure>
+                    </div>
+                    
+                    
+                    <div class="main-location ">
+                        <ul>
+                            <li class="location-has-children choose-location">
+                                <form action="#">
+                                    <input type="text" value="" name="location" placeholder="Enter your delivery location" autocomplete="off">
+                                    <span id="foodbakery_radius_location_open" class="foodbakery-radius-location"><i class="icon-target5"></i></span>
+                                </form>
+                                
+                            </li>
+                        </ul>
+                        </div>
+                </div>
+                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                    {% if not user.is_authenticated%}
+                    <div class="login-option">
+                        <a class="cs-color cs-popup-joinus-btn login-popup d-inline-block mr-0"  href="{%url 'login'%}">Login</a>
+                        /<a href="{% url 'register_user'%}" class="cs-color cs-popup-joinus-btn login-popup ml-0">Register</a>
+                        <a class="get-start-btn d-inline-block" href="{% url 'register_vendor'%}">Register Restaurant</a>
+                    </div>
+                    {% else %}
+                    <div class="login-option">
+                        <a class="cs-color cs-popup-joinus-btn login-popup d-inline-block mr-0"  href="{%url 'myAccount'%}">My account</a>
+                        <a class="cs-color cs-popup-joinus-btn login-popup d-inline-block mr-0 text-danger"  href="{%url 'logout'%}">Logout</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

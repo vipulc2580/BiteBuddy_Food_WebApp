@@ -1,0 +1,26 @@
+UserForm
+user->Foriegn Key
+profile_photo
+cover_photo
+address_line_1
+address_line_2
+country
+state
+city
+pin_code
+latitude
+longitude
+created_at
+modified_at
+
+
+
+
+# Vendor Model
+user=OneToOneField
+user_profile=OneToOneField
+vendor_name or restaurant_name
+vendor_license or restaurant_license
+is_approved
+created_at
+modified_at
