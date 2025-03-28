@@ -1,0 +1,44 @@
+@keyframes show-toast{
+    0% {bottom: -100%}
+    20% {bottom: 100px}
+    80% {bottom: 100px}
+    100% {bottom: -100%}
+}
+
+.show-notification{
+    position: fixed;
+    bottom: 100%;
+    right: 20px;
+    animation-name: show-toast;
+    animation-duration: 8s;
+    z-index: 99;
+}
+
+.btn{
+    padding: 2px 1.75em;
+    font-size: 12px;
+    cursor: pointer;
+}
+.custom-float-right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.table-custom-borderless, 
+.table-custom-borderless th, 
+.table-custom-borderless td {
+    border: none !important;
+}
+
+.restaurant-name-title {
+    color: rgb(255, 255, 255) !important;  /* Ensures font color is white */
+    font-size: 28px;  /* Slightly large for prominence */
+    font-weight: bold; /* Makes it stand out */
+    text-transform: uppercase; /* Gives a professional look */
+    letter-spacing: 1.2px; /* Adds slight spacing for better readability */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Adds depth */
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)); /* Subtle gradient */
+    padding: 10px 20px; /* Adds spacing around */
+    border-radius: 8px; /* Smooth rounded edges */
+    display: inline-block; /* Makes it size only as per content */
+}
