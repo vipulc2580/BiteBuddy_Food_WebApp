@@ -99,7 +99,7 @@ def register_restaurant(request):
 
             messages.success(request,'Your vendor account has been registered successfully,Please wait for approval')
             # print('Vendor successfully saved')
-            return redirect('register_vendor')
+            return redirect('login')
         else:
             print('Invalid form')
             print(form.errors)

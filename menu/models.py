@@ -26,7 +26,7 @@ class FoodItem(models.Model):
     slug=models.SlugField(max_length=100,unique=True)
     description=models.TextField(max_length=250,blank=True)
     price=models.DecimalField(max_digits=10, decimal_places=2)
-    image=models.ImageField(upload_to='foodimages', height_field=None, width_field=None, max_length=None)
+    image=models.ImageField(upload_to='foodimages')
     is_available=models.BooleanField(default=True)
     created_at=models.DateTimeField(auto_now=False, auto_now_add=True)
     modified_at=models.DateTimeField(auto_now=True, auto_now_add=False)
@@ -34,3 +34,6 @@ class FoodItem(models.Model):
 
     def __str__(self):
         return f"{self.food_title}"
+
+    def clean(self):
+        self.food_title=self.food_title.capitalize()
