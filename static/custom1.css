@@ -42,3 +42,11 @@
     border-radius: 8px; /* Smooth rounded edges */
     display: inline-block; /* Makes it size only as per content */
 }
+
+.badge-warning {
+    display: inline-block !important;
+    color: black !important;
+    background-color: yellow !important;
+    padding: 5px 10px;
+    border-radius: 5px;
+}

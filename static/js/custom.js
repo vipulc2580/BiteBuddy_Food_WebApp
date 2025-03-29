@@ -74,3 +74,201 @@ function onPlaceChanged (){
         }
     }
 }
+
+$(document).ready(function(){
+    $('.add_to_cart').on('click',function(e){
+        e.preventDefault();
+        let food_id=$(this).attr('data-id');
+        let url=$(this).attr('data-url');
+        $.ajax({
+            type:'GET',
+            url:url,
+            success: function(response){
+                // console.log(response)
+                if(response.status=='login_required'){
+                    // console.log('login_required');
+                    Swal.fire({
+                        title: "Login Required",
+                        text: response['message'],
+                        icon: "warning",
+                        confirmButtonText: "Login",
+                        timer:3000,
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          window.location.href = "/login";  // Change to your login URL
+                        }
+                      });
+                      
+                }
+                else if(response.status=='Failed'){
+                    Swal.fire({
+                        title: "Failed!",
+                        text:response['message'],
+                        icon: "error",
+                        timer: 3000,
+                        showConfirmButton: true 
+                      });
+                }
+                else{
+                cart_counter = response?.cart_counter?.cart_count || "0";
+                $('#cart_counter').html(cart_counter); 
+                
+                // Safely access quantity, fallback to "0" if undefined or null
+                    let qty = response?.qty ?? "0"; 
+                    $('#qty-' + food_id).html(qty);
+                    applyCartAmount(response['cart_amount']['subtotal'],response['cart_amount']['grand_total'],response['cart_amount']['tax'])
+                }
+
+            }
+        });
+    });
+
+    // decrease cart
+    $('.decrease_cart').on('click',function(e){
+        e.preventDefault();
+        let food_id=$(this).attr('data-id');
+        let url=$(this).attr('data-url');
+        let id=$(this).attr('data-cart-id');
+                    // console.log(id);
+        // console.log(food_id,url);
+        $.ajax({
+            type:'GET',
+            url:url,
+            success: function(response){
+                //   console.log(response)
+                if(response.status=='login_required'){
+                    // console.log('login_required');
+                    Swal.fire({
+                        title: "Login Required",
+                        text: response['message'],
+                        icon: "warning",
+                        confirmButtonText: "Login",
+                        timer:3000,
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          window.location.href = "/login";  // Change to your login URL
+                        }
+                      });
+                      
+                }
+                else if(response.status=='Failed'){
+                    Swal.fire({
+                        title: "Failed!",
+                        text:response['message'],
+                        icon: "error",
+                        timer: 3000,
+                        showConfirmButton: true
+                      });
+                }
+                else{
+                cart_counter = response?.cart_counter?.cart_count || "0";
+                $('#cart_counter').html(cart_counter); 
+                
+                // Safely access quantity, fallback to "0" if undefined or null
+                let qty = response?.qty ?? "0"; 
+                $('#qty-' + food_id).html(qty);
+                
+                 if(window.location.pathname=='/cart/' && qty==0){
+                    
+                    delete_cart_element(id,response);
+                    check_empty_cart();
+                 }
+                 applyCartAmount(response['cart_amount']['subtotal'],response['cart_amount']['grand_total'],response['cart_amount']['tax']);
+                }
+  
+            }
+        });
+    });
+
+    // delete cart item 
+    $('.delete_cart').on('click',function(e){
+        e.preventDefault();
+        let item_id=$(this).attr('data-id');
+        let url=$(this).attr('data-url');
+        // console.log(food_id,url);
+        $.ajax({
+            type:'GET',
+            url:url,
+            success: function(response){
+                // console.log(response);
+                if(response.status=='login_required'){
+                    // console.log('login_required');
+                    Swal.fire({
+                        title: "Login Required",
+                        text: response['message'],
+                        icon: "warning",
+                        confirmButtonText: "Login",
+                        timer:3000,
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          window.location.href = "/login";  // Change to your login URL
+                        }
+                      });
+                      
+                }
+                else if(response.status=='Failed'){
+                    if(response.message=='Cart Item does not exist in Cart'){
+                        delete_cart_element(item_id,response)
+                    }
+                    else{
+                    Swal.fire({
+                        title: "Failed!",
+                        text:response['message'],
+                        icon: "error",
+                        timer: 3000,
+                        showConfirmButton: true 
+                      });
+                    }
+                }
+                else{
+                    delete_cart_element(item_id,response)
+                    applyCartAmount(response['cart_amount']['subtotal'],response['cart_amount']['grand_total'],response['cart_amount']['tax'])
+                }
+                check_empty_cart();
+
+            }
+        });
+    });
+    
+    function check_empty_cart(){
+        if ($("#menu-item-list-6272 ul li").length === 0) {
+            // console.log('i m here');
+            $("#empty-cart").show();  // Show empty cart message
+        }
+    }
+    // remove cart item
+    function delete_cart_element(id,response){
+        cart_counter = response?.cart_counter?.cart_count || "0";
+        $('#cart_counter').html(cart_counter); 
+        $('#cart-item-'+id).remove();
+        Swal.fire({
+            title: "Item Deleted",
+            text: response['message'],
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+            toast: true,
+            position: "top-end"
+        });
+    }
+
+    //apply Cart Amounts
+    function applyCartAmount(subtotal,grand_total,tax){
+        if(window.location.pathname=='/cart/'){
+            $('#subtotal').html(subtotal);
+            $('#total').html(grand_total);
+            // $('#tax').html(tax);
+        }
+    }
+
+    // place the cart item quantity on load
+    $('.item_qty').each(function(){
+        let the_id=$(this).attr('id')
+        let quantity=$(this).attr('data-qty')
+        // console.log(quantity,the_id)
+        // get the previous quantity and then just append to it
+        $('#'+the_id).html(quantity)
+    });
+});
+
+

@@ -8,6 +8,7 @@ from django.conf import settings
 
 
 def detectUser(user):
+    redirectUrl=None
     if user.role==1:
         redirectUrl='vendorDashboard'
     elif user.role==2:

@@ -21,11 +21,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import handler403
 from accounts.views import custom_403_view
-
+from marketplace import views as marketplaceviews
 handler403 = custom_403_view
 
 urlpatterns = [
     path('admin/', admin.site.urls,name='admin'),
     path('',views.home,name='home'),
     path('',include('accounts.urls')),
+    path('marketplace/',include('marketplace.urls')),
+    #Cart
+    path('cart/',marketplaceviews.cart,name='cart'),
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

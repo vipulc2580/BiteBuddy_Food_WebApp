@@ -2,7 +2,7 @@
 <div class="wrapper">
 <header id="header">
     <div class="main-header">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
                     <div class="logo">
@@ -29,12 +29,22 @@
                 <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                     {% if not user.is_authenticated%}
                     <div class="login-option">
+                        <a class="btn btn-outline-danger text-uppercase font-weight-bold mr-0 mt-0"  href="{%url 'marketplace'%}">Marketplace</a>
                         <a class="cs-color cs-popup-joinus-btn login-popup d-inline-block mr-0"  href="{%url 'login'%}">Login</a>
                         /<a href="{% url 'register_user'%}" class="cs-color cs-popup-joinus-btn login-popup ml-0">Register</a>
                         <a class="get-start-btn d-inline-block" href="{% url 'register_vendor'%}">Register Restaurant</a>
                     </div>
                     {% else %}
                     <div class="login-option">
+                        
+                        <a class="btn btn-outline-danger text-uppercase font-weight-bold mr-2 mt-0"  
+                             href="{% url 'marketplace' %}">Marketplace</a>
+
+                        <a href="{% url 'cart' %}" class="ml-3">  <!-- Adjust ml-3 for spacing -->
+                            <i class="fa fa-shopping-cart text-danger" style="font-size:20px;"></i>
+                            <span class="badge bg-danger" id="cart_counter" 
+                                style="border-radius:50px; position:relative; bottom:10px; left:-5px;">{{cart_count}}</span>
+                        </a>
                         <a class="cs-color cs-popup-joinus-btn login-popup d-inline-block mr-0"  href="{%url 'myAccount'%}">My account</a>
                         <a class="cs-color cs-popup-joinus-btn login-popup d-inline-block mr-0 text-danger"  href="{%url 'logout'%}">Logout</a>
                     </div>
