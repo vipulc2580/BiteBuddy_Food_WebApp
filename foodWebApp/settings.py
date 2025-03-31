@@ -173,3 +173,4 @@ DEFAULT_FROM_EMAIL=config('default_from_email')
 
 
 GOOGLE_API_KEY=config('google_api_key')
+# LOGIN_URL = '/login/'

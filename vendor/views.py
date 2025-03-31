@@ -1,15 +1,16 @@
 from django.shortcuts import render,get_object_or_404,redirect
-from django.http import HttpResponse
-from .forms import VendorForm
+from django.http import HttpResponse,JsonResponse
+from .forms import VendorForm,OpeningHourForm
 from accounts.forms import UserProfileForm
 from accounts.models import UserProfile
-from .models import Vendor
+from .models import Vendor,OpeningHour
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required,user_passes_test
 from accounts.views import check_role_vendor
 from menu.models import Category,FoodItem
 from menu.forms import CategoryForm,FoodItemForm
 from django.template.defaultfilters import slugify
+from django.db import IntegrityError
 
 # Create your views here.
 
@@ -88,8 +89,8 @@ def add_category(request):
             category_name=form.cleaned_data['category_name']
             category=form.save(commit=False)
             category.vendor=get_vendor(request)
-            category.slug=slugify(category_name)
             category.save()
+            category.slug=slugify(category_name)+'-'+str(category.id)
             messages.success(request,'New Category added successfully!')
             return redirect('menu_builder')
     context={
@@ -173,3 +174,63 @@ def delete_food(request,pk):
     foodItem.delete()
     messages.success(request,'Food Item has been deleted successfully!')
     return redirect('fooditems_by_category',pk=foodItem.category.id)
+
+
+def opening_hours(request):
+    vendor_opening_hours=OpeningHour.objects.filter(vendor=get_vendor(request))
+    form=OpeningHourForm()
+    context={
+        'form':form,
+        'opening_hours':vendor_opening_hours,
+    }
+    return render(request,'vendor/opening_hours.html',context)
+
+
+def add_opening_hours(request):
+    if request.user.is_authenticated:
+        # handle the data and save them inside the database
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest" and request.method=='POST':
+            day=request.POST.get('day')
+            from_hour=request.POST.get('from_hour')
+            to_hour=request.POST.get('to_hour')
+            is_closed=request.POST.get('is_closed')
+            try:
+                hour=OpeningHour.objects.create(vendor=get_vendor(request),day=day,from_hour=from_hour,to_hour=to_hour,is_closed=is_closed)
+                if hour:
+                    day=OpeningHour.objects.get(id=hour.id)
+                    if day.is_closed:
+                        response={'status':'Success','id':hour.id,'day':day.get_day_display(),'is_closed':'Closed','message':'Opening Hour Added Successfully!'}
+                    else:
+                        response={'status':'Success','id':hour.id,'day':day.get_day_display(),'from_hour':hour.from_hour,'to_hour':hour.to_hour,'is_closed':'Not Closed','message':'Opening Hour Added Successfully!'}
+            except IntegrityError as e:
+                print(get_vendor(request),from_hour,to_hour,is_closed)
+                response={'status':'Failed','message':from_hour+'-'+to_hour+' already exists for this day!'}
+            return JsonResponse(response)
+        else:
+            return JsonResponse({'status':'Failed','message':'Invalid Request'})
+    return JsonResponse({'status':'Failed','message':'Please Login!'})
+
+def remove_opening_hours(request,pk=None):
+    if request.user.is_authenticated:
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            hour=OpeningHour.objects.get(pk=pk)
+            if hour:
+                hour.delete()
+                response={
+                    'status':'Success',
+                    'message':'Opening Hour Deleted Successfully!',
+                    'id':pk
+                }
+            else:
+                response={
+                    'status':'Failed',
+                    'message':'Internal Error occured!'
+                }
+            return JsonResponse(response)
+        else:
+            return JsonResponse({
+                'status':'Failed',
+                'message':'Invalid Request',
+            })
+    else:
+        return JsonResponse({'status':'Failed','message':'Login Required!'})

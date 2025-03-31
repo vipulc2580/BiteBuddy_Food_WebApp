@@ -1,19 +1,28 @@
 from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse,JsonResponse
-from vendor.models import Vendor
+from vendor.models import Vendor,OpeningHour
 from menu.models import Category,FoodItem
 from django.db.models import Prefetch
 from .models import Cart 
 from .context_processors import get_cart_counter,get_cart_amounts
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
+from django.db.models import Exists, OuterRef
+from django.db.models import Q 
+from datetime import date,datetime
 # Create your views here.
 def marketplace(request):
-    vendors=Vendor.objects.filter(is_approved=True,user__is_active=True)
-    context={
-        'vendors':vendors
+    vendors =vendors = Vendor.objects.filter(
+            is_approved=True,
+            user__is_active=True
+        ).filter(Exists(Category.objects.filter(Exists(FoodItem.objects.filter(category=OuterRef('pk')),vendor=OuterRef('pk'))
+            ))
+        )
+
+    context = {
+        'vendors': vendors
     }
-    return render(request,'marketplace/listings.html',context)
+    return render(request, 'marketplace/listings.html', context)
 
 def vendor_detail(request,vendor_slug):
     vendor=get_object_or_404(Vendor,vendor_slug=vendor_slug)
@@ -24,6 +33,16 @@ def vendor_detail(request,vendor_slug):
          queryset=FoodItem.objects.filter(is_available=True)
         )
     )
+    openingHours=OpeningHour.objects.filter(vendor=vendor).order_by('day','-from_hour')
+    # print(openingHours)
+
+    # check current days opening hours
+    today_date=date.today()
+    today=today_date.isoweekday()
+    current_opening_hours=OpeningHour.objects.filter(vendor=vendor,day=today)
+    # print(today)
+    
+    # print(is_open)
     if request.user.is_authenticated:
         cart_items=Cart.objects.filter(user=request.user)
     else:
@@ -32,13 +51,13 @@ def vendor_detail(request,vendor_slug):
         'vendor':vendor,
         'categories':categories,
         'cart_items':cart_items,
+        'opening_hours':openingHours,
+        'current_opening_hours':current_opening_hours,
     }
     return render(request,'marketplace/vendor_detail.html',context)
 
-@login_required(login_url='login')
-@never_cache
+
 def add_to_cart(request,food_id=None):
-    # print(food_id)
     if request.user.is_authenticated:
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             try:
@@ -73,7 +92,7 @@ def add_to_cart(request,food_id=None):
     else:
         return JsonResponse({'status': 'login_required', 'message': 'Please Login to continue'})
 
-@login_required(login_url='login')
+
 def decrease_cart(request,food_id=None):
     if request.user.is_authenticated:
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -111,7 +130,6 @@ def decrease_cart(request,food_id=None):
         return JsonResponse({'status': 'login_required', 'message': 'Please Login to continue'})
 
 @login_required(login_url='login')
-@never_cache
 def cart(request):
     cart_items=None
     if request.user.is_authenticated:
@@ -150,3 +168,23 @@ def delete_cart(request,cart_id):
             return JsonResponse({'status': 'Failed', 'message': 'Invalid Request'})
     else:
         return JsonResponse({'status': 'login_required', 'message': 'Please Login!'})
+
+
+def search(request):
+    address=request.GET['address']
+    latitude=request.GET['lat']
+    longitude=request.GET['lng']
+    radius=request.GET['radius']
+    keyword=request.GET['keyword']
+
+    # get the vendor ids that has food item the user is looking 
+    fetch_vendors_by_fooditems=FoodItem.objects.filter(food_title__icontains=keyword,is_available=True).values_list('vendor',flat=True)
+    # print(fetch_vendors_by_fooditems)
+    vendors=Vendor.objects.filter(Q(id__in=fetch_vendors_by_fooditems) | Q(vendor_name__icontains=keyword,is_approved=True,user__is_active=True))
+    print(vendors)
+
+
+    context = {
+        'vendors': vendors
+    }
+    return render(request,'marketplace/listings.html',context)

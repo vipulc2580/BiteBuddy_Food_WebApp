@@ -24,3 +24,18 @@ vendor_license or restaurant_license
 is_approved
 created_at
 modified_at
+
+
+
+Geodjango is a special service of django which is helpful to build location based services in our web application
+Requirements
+1.Python and Django
+2.Spatial Database
+3.GeoSpatial Libraries(GDAL)Geo Spatial Data Abstration Library(read and manipulate spatial Database)
+
+Spatial Database is a database which optimized to store and query the spatial objects
+(Point a house,a store,a tree these are points) line/polyline(river,cable,road) Polygon(country,lake,city)
+
+
+PostGIS extension to PostgresSQL
+POSTGIS allows us to store spatial data and use it in library functions to manipulate it
