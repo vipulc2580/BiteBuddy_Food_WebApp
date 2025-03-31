@@ -91,6 +91,7 @@ table > tbody > tr > td{
     z-index: 1000;
 }
 
+
 /* Ensure proper width on mobile */
 @media (max-width: 768px) {
     .delivery-dropdown {

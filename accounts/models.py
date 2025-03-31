@@ -17,8 +17,8 @@ class UserManager(BaseUserManager):
         user=self.model(
             email=self.normalize_email(email), #normalized means lowercase the email
             username=username,
-            first_name=first_name,
-            last_name=last_name
+            first_name=first_name.strip(),
+            last_name=last_name.strip()
         )
         user.set_password(password)
         #using parameter is used to define the db to be used
