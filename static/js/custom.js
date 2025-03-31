@@ -118,7 +118,7 @@ $(document).ready(function(){
                 // Safely access quantity, fallback to "0" if undefined or null
                     let qty = response?.qty ?? "0"; 
                     $('#qty-' + food_id).html(qty);
-                    applyCartAmount(response['cart_amount']['subtotal'],response['cart_amount']['grand_total'],response['cart_amount']['tax'])
+                    applyCartAmount(response['cart_amount']['subtotal'],response['cart_amount']['grand_total'],response['cart_amount']['taxes'])
                 }
 
             }
@@ -175,7 +175,7 @@ $(document).ready(function(){
                     delete_cart_element(id,response);
                     check_empty_cart();
                  }
-                 applyCartAmount(response['cart_amount']['subtotal'],response['cart_amount']['grand_total'],response['cart_amount']['tax']);
+                 applyCartAmount(response['cart_amount']['subtotal'],response['cart_amount']['grand_total'],response['cart_amount']['taxes']);
                 }
   
             }
@@ -224,7 +224,7 @@ $(document).ready(function(){
                 }
                 else{
                     delete_cart_element(item_id,response)
-                    applyCartAmount(response['cart_amount']['subtotal'],response['cart_amount']['grand_total'],response['cart_amount']['tax'])
+                    applyCartAmount(response['cart_amount']['subtotal'],response['cart_amount']['grand_total'],response['cart_amount']['taxes'])
                 }
                 check_empty_cart();
 
@@ -255,11 +255,18 @@ $(document).ready(function(){
     }
 
     //apply Cart Amounts
-    function applyCartAmount(subtotal,grand_total,tax){
+    function applyCartAmount(subtotal,grand_total,taxes){
         if(window.location.pathname=='/cart/'){
             $('#subtotal').html(subtotal);
             $('#total').html(grand_total);
-            // $('#tax').html(tax);
+            // console.log('i m getting invoked')
+                for (let taxType in taxes) {
+                    let taxAmount = Object.values(taxes[taxType])[0];
+                    // console.log(`Tax Type: ${taxType}, Tax Amount: ${taxAmount}`);
+                //    console.log($('#tax-'+taxType).html())
+                   $('#tax-'+taxType).html(taxAmount)
+                //    console.log(taxAmount,$('#tax-'+taxType).html())
+                }
         }
     }
 
