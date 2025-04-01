@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from accounts.forms import UserProfileForm,UserInfoForm
 from accounts.models import UserProfile,User
 from django.contrib import messages
+from orders.models import Order,OrderedFood
+import json
 # Create your views here.
 @login_required
 def cprofile(request):
@@ -26,3 +28,33 @@ def cprofile(request):
         'profile':profile,
     }
     return render(request,'customers/cprofile.html',context)
+
+@login_required
+def my_orders(request):
+    orders=Order.objects.filter(user=request.user,is_ordered=True).order_by('-created_at')
+    context={
+        'orders':orders,
+    }
+    return render(request,'customers/my_orders.html',context)
+
+@login_required
+def order_detail(request,order_number):
+    try:
+        order=Order.objects.get(order_number=order_number,is_ordered=True)
+        ordered_food=OrderedFood.objects.filter(order=order)
+        subtotal=0
+        for item in ordered_food:
+            subtotal+=(item.price*item.quantity)
+        # print(subtotal)
+        tax_data=json.loads(order.tax_data)
+        # print(tax_data)
+        context={
+            'order':order,
+            'ordered_food':ordered_food,
+            'subtotal':subtotal,
+            'tax_data':tax_data,
+        }
+        return render(request,'customers/order_detail.html',context)
+    except:
+        messages.error(request,'Something went wrong!!')
+        return redirect('customer')

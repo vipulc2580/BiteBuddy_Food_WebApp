@@ -18,8 +18,10 @@
                             <span class="restaurant-name-title">{{user.first_name}}{{user.last_name}}</span>
                             {% if user.phone_number %}
                             <div class="text">
-                                <i class="icon-local_pizza"></i>
+                                <i class="icon-location"></i>
                                 <p>{{user.phone_number}}</p>
+                                <i class="icon-envelope"></i> 
+                                <p>{{user.email}}</p>
                             {% endif %}
                             </div>
                         </div>

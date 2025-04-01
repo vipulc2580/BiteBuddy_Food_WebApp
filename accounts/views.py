@@ -12,7 +12,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from vendor.models import Vendor
 from django.template.defaultfilters import slugify
-
+from orders.models import Order
 
 #restrict vendor from accessing customer page
 def check_role_vendor(user):
@@ -157,7 +157,15 @@ def vendorDashboard(request):
 @login_required(login_url='login')
 @user_passes_test(check_role_customer)
 def custDashboard(request):
-    return render(request,'accounts/custDashboard.html')
+    orders=Order.objects.filter(user=request.user,is_ordered=True).order_by('-created_at')
+    orders_count=orders.count()
+    if orders_count>5:
+        orders=orders[:5]
+    context={
+        'orders':orders,
+        'orders_count':orders_count,
+    }
+    return render(request,'accounts/custDashboard.html',context)
 
 def activate(request,uidb64,token):
     try:
