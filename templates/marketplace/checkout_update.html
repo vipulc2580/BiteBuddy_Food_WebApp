@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load mathfilters %}
+{% load static %}
+{% block content %}
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Billing Address -->
+        <div class="col-lg-6">
+            <div class="checkout-card shadow-sm p-4">
+                <h4 class="mb-4 text-danger"><i class="fa fa-shopping-cart"></i> Billing Address</h4>
+                <form action="#" method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label">First Name</label>
+                        {{ order_form.first_name }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Last Name</label>
+                        {{ order_form.last_name }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        {{ order_form.phone }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email Address</label>
+                        {{ order_form.email }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        {{ order_form.address }}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Country</label>
+                            {{ order_form.country }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">State</label>
+                            {{ order_form.state }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">City</label>
+                            {{ order_form.city }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Pin Code</label>
+                            {{ order_form.pin_code }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Your Order -->
+        <div class="col-lg-6 mt-4 mt-lg-0">
+            <div class="checkout-card shadow-sm p-4">
+                <h4 class="mb-4 text-success"><i class="icon-room_service"></i> Your Order</h4>
+                
+                <ul class="list-group mb-3">
+                    {% for item in cart_items %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="{{ item.fooditem.image.url }}" class="order-img" alt="{{ item.fooditem }}">
+                            <div class="ms-3">
+                                <h6 class="mb-0">{{ item.fooditem }}</h6>
+                                <small class="text-muted">{{ item.fooditem.description }}</small>
+                                <br>
+                                <a href="{% url 'vendor_detail' item.fooditem.vendor.vendor_slug %}" class="badge bg-warning text-dark">{{ item.fooditem.vendor.vendor_name }}</a>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-primary">{{item.quantity}} QTY</span>
+                            <br>
+                            <span class="fw-bold">{{ item.fooditem.price|mul:item.quantity }}</span>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Subtotal</span>
+                        <strong>{{ subtotal }}</strong>
+                    </li>
+                    {% for key, value in taxes.items %}
+                    {% for i, j in value.items %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ key }} <small>({{ i }}%)</small></span>
+                        <strong>{{ j }}</strong>
+                    </li>
+                    {% endfor %}
+                    {% endfor %}
+                    <li class="list-group-item d-flex justify-content-between fw-bold text-danger">
+                        <span>TOTAL</span>
+                        <strong>{{ grand_total }}</strong>
+                    </li>
+                </ul>
+
+                <h5 class="mt-4">Select Payment Method</h5>
+                <div class="payment-options">
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="PayPal">
+                        <img src="{% static 'images/PayPal.png' %}" alt="PayPal">
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="RazorPay">
+                        <img src="{% static 'images/razorpay_logo.png' %}" alt="RazorPay">
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-danger w-100 mt-3 fw-bold">Place Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

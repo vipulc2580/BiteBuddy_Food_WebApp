@@ -39,3 +39,50 @@ Spatial Database is a database which optimized to store and query the spatial ob
 
 PostGIS extension to PostgresSQL
 POSTGIS allows us to store spatial data and use it in library functions to manipulate it
+
+
+
+
+Payment Model
+user-foreign Key
+transaction_id string
+payment_method=(Razorpay,paypal)
+amount string
+status boolean 
+created_at datetime
+
+
+Order Model
+user=ForeignKey
+payment foreignKey
+order_number string
+first_name string
+last_name string
+phone string
+email string
+address string
+country string
+state string
+city string
+pin_code string
+total float
+tax_data=(json)
+total_tax float
+payment_method string
+status(new=default,Accepted,Completed,Cancelled)
+is_ordered boolean(succes)
+created_at datetime
+updated_at datetime 
+name() returns the first_name+last_name
+
+
+OrderedFood
+order ForeignKey(order model)
+payment ForeignKey(payment model)
+user ForeignKey(user model)
+fooditem ForeignKey(fooditem model)
+quantity int
+price float
+amount float
+created_at
+updated_at

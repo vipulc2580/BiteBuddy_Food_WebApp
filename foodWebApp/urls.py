@@ -33,5 +33,11 @@ urlpatterns = [
     path('cart/',marketplaceviews.cart,name='cart'),
     # search
     path('search/',marketplaceviews.search,name='search'),
-
+    #checkout page
+    path('checkout/',marketplaceviews.checkout,name='checkout'),
+    #order path
+    path('orders/',include('orders.urls')),
+    #checkout payment route
+    path('demo/checkout/api/paypal/order/create/',views.create_order,name='create_paypal_order'),
+    path("demo/checkout/api/paypal/order/<str:order_id>/<str:order_number>/capture/",views.capture_order, name="capture_order"),
 ]+ static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

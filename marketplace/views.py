@@ -10,6 +10,9 @@ from django.views.decorators.cache import never_cache
 from django.db.models import Exists, OuterRef
 from django.db.models import Q 
 from datetime import date,datetime
+from orders.forms import OrderForm
+from accounts.models import UserProfile
+from django.contrib import messages
 # Create your views here.
 def marketplace(request):
     vendors =vendors = Vendor.objects.filter(
@@ -137,7 +140,7 @@ def cart(request):
     context={
         'cart_items':cart_items
     }
-    print(cart_items)
+    # print(cart_items)
     return render(request,'marketplace/cart.html',context)
 
 @login_required(login_url='login')
@@ -188,3 +191,33 @@ def search(request):
         'vendors': vendors
     }
     return render(request,'marketplace/listings.html',context)
+
+
+@login_required(login_url='login')
+def checkout(request):
+    cart_items=Cart.objects.filter(user=request.user).order_by('created_at')
+    cart_count=cart_items.count()
+    if cart_count<=0:
+        messages.error(request,'Cart is currently empty,Fill the Cart!')
+        return redirect('marketplace')
+    
+    user_profile=UserProfile.objects.get(user=request.user)
+    user=request.user
+    initial_values={
+        'first_name':user.first_name,
+        'last_name':user.last_name,
+        'email':user.email,
+        'phone':user.phone_number,
+        'address':user_profile.address,
+        'country':user_profile.country,
+        'state':user_profile.state,
+        'city':user_profile.city,
+        'pin_code':user_profile.pincode,
+    }
+    order_form=OrderForm(initial=initial_values)
+    context={
+        'order_form':order_form,
+        'cart_items':cart_items,
+
+    }
+    return render(request,'marketplace/checkout.html',context)

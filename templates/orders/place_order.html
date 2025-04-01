@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script src="https://www.paypal.com/sdk/js?client-id={{PAYPAL_CLIENT_ID}}"></script>
+
+<!-- Main Section Start -->
+<div class="main-section pt-5">
+    <div class="page-section">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                    <div class="tabs-holder horizontal">
+                        <ul class="stickynav-tabs nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#"><i class="fa fa-shopping-cart text-danger"></i>Review Your Billing Address</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane in active">
+                                <div class="menu-itam-holder">
+                                    <div id="menu-item-list-6272" class="menu-itam-list">
+                                        <div class="billing-address">
+                                            <div><b>{{order.name}}</b></div>
+                                            <div>{{order.address}}</div>
+                                            <div>{{order.city}}{{order.pin_code}}</div>
+                                            <div>{{order.state}}{{order.state}}</div>
+                                            <div>Phone : <b>{{order.phone}}</b></div>
+                                            <div>Email : <b>{{order.email}}</b></div>
+                                            <div>Payment : <b>{{order.payment_method}}</b></div>
+                                            <br>
+                                            <div><a href="{% url 'checkout' %}" class="btn btn-outline-danger">Edit</a></div>
+                                            <br>
+                                        </div>                
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Your order section -->
+                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 mt-3">
+                    <div class="tabs-holder horizontal">
+                        <ul class="stickynav-tabs nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#"><i class="icon- icon-room_service"></i>Your Order</a></li>
+                            
+                        </ul>
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane in active">
+                                <div class="menu-itam-holder">
+                                    <div>
+                                        <table class="table">
+                                            <tbody>
+                                                {% for item in cart_items  %}
+                                                <tr>
+                                                    <td><img src="{{item.fooditem.image.url}}" width="40"alt="FoodItem"></td>
+                                                    <td><b>{{item.fooditem}}</b></td>
+                                                    <td>{{item.quantity}}</td>
+                                                    <td>{{item.fooditem.price}}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        <ul>
+                                            <li style="list-style-type: none;">
+                                                Subtotal
+                                                <span class="price " style="float:right;">
+                                                    <span id="subtotal">{{ subtotal }}</span>
+                                                </span>
+                                            </li>
+
+                                            {% for key, value in taxes.items %}
+                                                {% for i, j in value.items %}
+                                                    <li style="list-style-type: none;">
+                                                        {{ key }} <small>({{ i }}%)</small>
+                                                        <span class="price"  style="float:right;">
+                                                            <span id="tax-{{ key }}">{{ j }}</span>
+                                                        </span>
+                                                    </li>
+                                                {% endfor %}
+                                            {% endfor %}
+
+
+                                            <li style="list-style-type: none; font-weight: 600;">
+                                                TOTAL
+                                                <span class="price" style="float:right;">
+                                                    <span id="total">{{ grand_total }}</span>
+                                                </span>
+                                            </li>
+
+                                            <div id="paypal-button-container"></div>
+                                        </ul>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Section End -->
+<script>
+    // Render the PayPal button into #paypal-button-container
+    var url="{% url 'payments'%}";
+    var order_number={{ order.order_number}}
+    var order_complete="{% url 'order_complete' %}"
+
+    paypal.Buttons({
+        createOrder: function(data, actions) {
+            return fetch('/demo/checkout/api/paypal/order/create/', {
+                method: 'POST'
+            }).then(function(res) {
+                return res.json();
+            }).then(function(orderData) {
+                return orderData.id;
+            });
+        },
+        onApprove: function(data, actions) {
+            return fetch('/demo/checkout/api/paypal/order/' + data.orderID+'/'+order_number+'/capture/', {
+                method: 'POST'
+            }).then(function(res) {
+                return res.json();
+            }).then(function(orderData) {
+                if (orderData['status'] == 200) {
+                    let order_number = orderData['order_number'];
+                    let transaction_id = orderData['transaction_id'];
+                
+                    // Show the spinner **before** redirecting
+                    const element = document.getElementById('paypal-button-container');
+                    element.innerHTML = '<h4 class="text-center"><i class="fa fa-spinner fa-spin"></i> Please wait...</h4>';
+                
+                    // Delay redirect slightly to allow the spinner to render
+                    setTimeout(() => {
+                        window.location.href = order_complete + '?order_no=' + order_number + '&trans_id=' + transaction_id;
+                    }, 2000);  // Delay for 1 second (1000ms)
+                }
+            });
+        }
+    }).render('#paypal-button-container');
+    
+    // send data to payments view 
+    
+</script>
+
+{% endblock %}

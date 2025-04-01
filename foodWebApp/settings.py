@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'menu',
     'marketplace',
     'customer',
+    'orders',
+     'mathfilters',
 ]
 
 MIDDLEWARE = [
@@ -75,6 +77,7 @@ TEMPLATES = [
                 'accounts.context_processors.get_vendor',
                 'accounts.context_processors.get_user_profile',
                 'accounts.context_processors.get_google_api_key',
+                'accounts.context_processors.get_paypal_client_id',
                 'marketplace.context_processors.get_cart_counter',
                 'marketplace.context_processors.get_cart_amounts',
             ],
@@ -175,3 +178,8 @@ DEFAULT_FROM_EMAIL=config('default_from_email')
 
 GOOGLE_API_KEY=config('google_api_key')
 # LOGIN_URL = '/login/'
+PAYPAL_CLIENT_ID=config('paypal_client_id')
+PAYPAL_SECRET_KEY=config('paypal_secret_key')
+PAYPAL_MODE = "sandbox"
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'

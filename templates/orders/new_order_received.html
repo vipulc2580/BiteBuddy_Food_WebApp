@@ -1,0 +1,10 @@
+{% autoescape off %}
+ Hi,
+ <br>
+ You have recieved a new order.
+ <ul>
+    <li><strong>Order Number:</strong>{{order.order_number}}</li>
+    <li><strong>Transaction Id:</strong>{{order.payment.transaction_id}}</li>
+ </ul>
+ Thank you! 
+{% endautoescape %}

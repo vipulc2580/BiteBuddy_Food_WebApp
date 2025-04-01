@@ -91,6 +91,90 @@ table > tbody > tr > td{
     z-index: 1000;
 }
 
+.payment-method [type=radio] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+
+.payment-method label {
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+
+.payment-method label img {
+    width: 120px; 
+    height: auto;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+
+.payment-method [type=radio]:checked + img {
+    outline: 3px solid green;
+    border-radius: 10px;
+    transform: scale(1.05); 
+}
+
+
+.payment-method label:hover img {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+
+/* .checkout-card {
+    border-radius: 12px;
+    border: none;
+}
+
+
+.order-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+}
+
+
+.payment-options {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.payment-option {
+    position: relative;
+    cursor: pointer;
+}
+
+.payment-option input[type="radio"] {
+    display: none;
+}
+
+.payment-option img {
+    width: 120px;
+    border-radius: 8px;
+    padding: 5px;
+    transition: all 0.3s ease-in-out;
+    border: 2px solid transparent;
+}
+
+.payment-option input[type="radio"]:checked + img {
+    border-color: green;
+    transform: scale(1.05);
+}
+
+.payment-option:hover img {
+    filter: brightness(1.1);
+} */
 
 /* Ensure proper width on mobile */
 @media (max-width: 768px) {

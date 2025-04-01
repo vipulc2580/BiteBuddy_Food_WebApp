@@ -39,4 +39,4 @@ def get_cart_amounts(request):
             taxes.update({tax_type:tax_dict})
         grand_total=subtotal+total_tax
 
-    return dict(subtotal=subtotal,grand_total=grand_total,taxes=taxes)
+    return dict(subtotal=subtotal,grand_total=grand_total,taxes=taxes,total_tax=total_tax)
