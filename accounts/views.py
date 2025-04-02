@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 # Create your views here.
+from datetime import datetime as dt
 from .forms import UserForm
 from vendor.forms import VendorForm
 from .models import User,UserProfile
@@ -152,7 +153,28 @@ def vendorDashboard(request):
     if request.user.role==2:
         messages.warning(request,'You are logged in as Customer')
         return redirect('myAccount')
-    return render(request,'accounts/vendorDashboard.html')
+    vendor=Vendor.objects.get(user=request.user)
+    orders=Order.objects.filter(vendors__in=[vendor.id],is_ordered=True).order_by('-created_at')
+    total_revenue=0
+    for order in orders:
+        total_revenue+=(order.get_total_by_vendor()['grand_total'])
+    current_month=dt.now().month
+    current_month_orders=orders.filter(vendors__in=[vendor.id],created_at__month=current_month)
+    # print(current_month_orders)
+    month_revenue=0
+    for current_month_order in current_month_orders:
+        month_revenue+=(current_month_order.get_total_by_vendor()['grand_total'])
+    # print(month_revenue)
+    order_count=orders.count()
+    if order_count>10:
+        orders=orders[:10]
+    context={
+        'order_count':order_count,
+        'orders':orders,
+        'total_revenue':total_revenue,
+        'month_revenue':month_revenue,
+    }
+    return render(request,'accounts/vendorDashboard.html',context)
 
 @login_required(login_url='login')
 @user_passes_test(check_role_customer)

@@ -11,7 +11,8 @@ from menu.models import Category,FoodItem
 from menu.forms import CategoryForm,FoodItemForm
 from django.template.defaultfilters import slugify
 from django.db import IntegrityError
-
+from orders.models import Order,OrderedFood
+import json
 # Create your views here.
 
 def get_vendor(request):
@@ -234,3 +235,32 @@ def remove_opening_hours(request,pk=None):
             })
     else:
         return JsonResponse({'status':'Failed','message':'Login Required!'})
+
+def order_detail(request,order_number):
+    try:
+        order=Order.objects.get(order_number=order_number,is_ordered=True)
+        ordered_food=OrderedFood.objects.filter(order=order,fooditem__vendor=get_vendor(request))
+        order_amount=order.get_total_by_vendor()
+        subtotal=order_amount.get('subtotal')
+        grand_total=order_amount.get('grand_total')
+        tax_data=order_amount.get('tax_data')
+        context={
+            'order':order,
+            'ordered_food':ordered_food,
+            'subtotal':subtotal,
+            'grand_total':grand_total,
+            'tax_data':tax_data
+        }
+        return render(request,'vendor/order_detail.html',context)
+    except:
+        return redirect('vendorDashboard')
+
+@login_required(login_url='login')
+@user_passes_test(check_role_vendor)
+def my_orders(request):
+    vendor=get_vendor(request)
+    orders=Order.objects.filter(vendors__in=[vendor.id],is_ordered=True).order_by('-created_at')
+    context={
+        'orders':orders
+    }
+    return render(request,'vendor/my_orders.html',context)

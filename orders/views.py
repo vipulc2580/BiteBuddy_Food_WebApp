@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.http import JsonResponse
-from marketplace.models import Cart 
+from marketplace.models import Cart,Tax
 from orders.forms import OrderForm
 from django.contrib import messages
 from marketplace.context_processors import get_cart_amounts
@@ -9,6 +9,8 @@ import json
 from .utils import generate_order_number
 from accounts.utils import send_notification
 from django.contrib.auth.decorators import login_required
+from menu.models import FoodItem
+
 # Create your views here.
 @login_required
 def place_order(request):
@@ -21,6 +23,27 @@ def place_order(request):
     total_tax=get_cart_amounts(request)['total_tax']
     grand_total=get_cart_amounts(request)['grand_total']
     taxes=get_cart_amounts(request)['taxes']
+    vendor_ids=list({i.fooditem.vendor.id for i in cart_items})
+    # get fooditem for vendor
+    vendor_subtotal={}
+    for item in cart_items:
+        fooditem=FoodItem.objects.get(pk=item.fooditem.id,vendor_id__in=vendor_ids)
+        v_id=fooditem.vendor.id 
+        vendor_subtotal[v_id]=vendor_subtotal.get(v_id,0)+(fooditem.price*item.quantity)
+    # print(vendor_subtotal)
+    get_taxes=Tax.objects.filter(is_active=True)
+    vendors_cart_amount={}
+    for vendor,subtotal in vendor_subtotal.items():
+        tax_data={}
+        for tax in get_taxes:
+            tax_type=tax.tax_type
+            tax_percentage=tax.tax_percentage
+            tax_amount=round((subtotal*(tax_percentage/100)),2)
+            # print(tax_type,tax_percentage,tax_amount)
+            tax_data.update({tax_type:{str(tax_percentage):str(tax_amount)}})
+        vendors_cart_amount[vendor]={str(subtotal):tax_data}
+            # taxes.update({tax_type:tax_dict})
+        # print(fooditem,)
     # print(subtotal,total_tax,grand_total,taxes)
     if request.method=='POST':
         form=OrderForm(request.POST)
@@ -40,9 +63,11 @@ def place_order(request):
             order.total_tax=total_tax
             order.tax_data=json.dumps(taxes)
             order.payment_method=request.POST['payment_method']
+            order.total_data=json.dumps(vendors_cart_amount)
             # print(request.POST['payment_method'])
             order.save()
             order.order_number=generate_order_number(order.id)
+            order.vendors.set(vendor_ids)
             order.save()
             context={
                 'order':order,
