@@ -1,20 +1,66 @@
-{% autoescape off %}
-Hi {{ user.username }},
-{% if is_approved %}
-<h3>Congratulations! Your restaurant has been approved by BiteBuddy</h3>
-<p>We welcome you to BiteBuddy MarketPlace ,now you can host your menu,we will help you in every way<br>
- possible to get more customers.
-</p>
-{% else %}
-<h3>We're sorry you are not eligible for publishing your food menu on our marketplace.</h3>
-<p>Your restaurant is not following BiteBuddy Rules and Regulations as this is against our values.<br>
-We want our customers and marketplace to have the best experience in terms of food and service.
-<br>
-Our Agent will meet you to further carry on this discussion or contact 
-<br>
-For more Info contact us at bitebuddysupport@gmail.com
-<br>
-Thank you!
-</p>
-{% endif %}
-{% endautoescape %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml" lang="en">
+
+<head><link rel="stylesheet" type="text/css" hs-webfonts="true" href="https://fonts.googleapis.com/css?family=Lato|Lato:i,b,bi">
+    <meta property="og:title" content="Vendor Approval Email">  
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <style type="text/css">
+      #email {
+        margin: auto;
+        width: 600px;
+        background-color: white;
+      }  
+      .approve-btn{
+        font: inherit;
+        background-color: #C33332;
+        border: none;
+        padding: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 900;
+        border-radius: 5px; 
+        text-decoration: none;
+      }      
+    </style>    
+  </head>    
+<body bgcolor="#F5F8FA" style="width: 100%; margin: auto 0; padding:0; font-family:Lato, sans-serif; font-size:16px; color:#33475B; word-break:break-word">
+  
+<div id="email">
+  <table role="presentation" width="100%">
+    <tr>
+    <td align="center" style="color: white;">
+     <img alt="Logo" src="https://raw.githubusercontent.com/vipulc2580/BiteBuddy_Food_WebApp/main/static/assets/extra-images/main-logo.png" width="400px" align="middle">
+    </td>
+  </table>
+
+  <table bgcolor="#EAF0F6" width="100%" role="presentation" border="0" cellpadding="0" cellspacing="10px" style="padding: 30px 30px 60px 60px;">
+    <tr>
+      <td>
+        <h2 style="text-align: center;">Hi {{ user.username }},</h2>
+        {% if is_approved %}
+          <h3 style="text-align: center;">Congratulations! Your restaurant has been approved by BiteBuddy</h3>
+          <p style="text-align: center;">We welcome you to BiteBuddy Marketplace. Now you can host your menu, and we will help you in every way possible to get more customers.</p>
+        {% else %}
+          <h3 style="text-align: center;">We're sorry, but your restaurant is not eligible for publishing on our marketplace.</h3>
+          <p style="text-align: center;">Your restaurant is not following BiteBuddy Rules and Regulations, which is against our values.<br>
+          We want our customers and marketplace to have the best experience in terms of food and service.<br>
+          Our agent will meet you to further discuss this, or you can contact us.<br>
+          For more info, reach out to us at <a href="mailto:bitebuddysupport@gmail.com">bitebuddysupport@gmail.com</a></p>
+        {% endif %}
+      </td> 
+    </tr>
+  </table>
+
+  <table role="presentation" bgcolor="#C33332" width="100%">
+      <tr>
+        <td align="center" style="padding: 15px 15px; color: #fff;">
+          <p>© {% now "Y" %} BiteBuddy Marketplace, All Rights Reserved.</p>
+          <a href="#" style="color:#fff;">Visit Website</a>      
+        </td>
+      </tr>
+  </table> 
+</div>
+</body>
+</html>

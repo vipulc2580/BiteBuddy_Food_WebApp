@@ -1,10 +1,98 @@
-{% autoescape off %}
- Hi,
- <br>
- You have recieved a new order.
- <ul>
-    <li><strong>Order Number:</strong>{{order.order_number}}</li>
-    <li><strong>Transaction Id:</strong>{{order.payment.transaction_id}}</li>
- </ul>
- Thank you! 
-{% endautoescape %}
+{% load mathfilters %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml" lang="en">
+
+<head><link rel="stylesheet" type="text/css" hs-webfonts="true" href="https://fonts.googleapis.com/css?family=Lato|Lato:i,b,bi">
+    <meta property="og:title" content="Email template">  
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <style type="text/css">
+      #email {
+        margin: auto;
+        width: 600px;
+        background-color: white;
+      }  
+      .activate-btn{
+        font: inherit;
+        background-color: #C33332;
+        border: none;
+        padding: 10px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 900;
+        border-radius: 5px; 
+        text-decoration: none;
+      }      
+    </style>    
+  </head>    
+<body bgcolor="#F5F8FA" style="width: 100%; margin: auto 0; padding:0; font-family:Lato, sans-serif; font-size:16px; color:#33475B; word-break:break-word">
+  
+<div id="email">
+  <table role="presentation" width="100%">
+    <tr>
+    <td  align="center" style="color: white;">
+     <img alt="Logo" src="https://raw.githubusercontent.com/vipulc2580/BiteBuddy_Food_WebApp/main/static/assets/extra-images/main-logo.png" width="400px" align="middle">
+      </td>
+  </table>
+
+  <table bgcolor="#EAF0F6" width="100%" role="presentation" border="0" cellpadding="0" cellspacing="10px" style="padding: 30px 30px 60px 60px;">
+    <tr>
+        <td>
+            <h2 style="text-align:center;">Order Recived!!</h2>
+            <p>Review order information below</p>
+        </td>
+    </tr>
+    <tr>
+        <td>Order Date :{{order.created_at}}</td>
+    </tr>
+    <tr>
+        <td>Order Number :{{order.order_number}}</td>
+    </tr>
+    <tr>
+        <td>Payment Method :{{order.payment_method}}</td>
+    </tr>
+    <tr>
+        <td>Transaction ID :{{order.payment.transaction_id}}</td>
+    </tr>
+  </table>
+  <table bgcolor="#EAF0F6" width="100%" role="presentation" border="0" cellpadding="0" cellspacing="10px" style="padding: 30px 30px 60px 60px;">
+    <tbody>
+        <tr>
+            <th>Food Item</th>
+            <th>Qty</th>
+            <th>Price</th>
+        </tr>
+        {% for food in ordered_food_to_vendor %}
+            <tr>
+                <td>
+                    <p style="margin:0;">{{food.fooditem.food_title}}</p>
+                    <small><a href="{% url 'vendor_detail' food.fooditem.vendor.vendor_slug %}" style="color:grey">{{food.fooditem.vendor}}</a></small>
+                </td>
+                <td>{{food.quantity}}</td>
+                <td>{{ food.fooditem.price|mul:food.quantity }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+  <table bgcolor="#EAF0F6" width="100%" role="presentation" border="0" cellpadding="0" cellspacing="10px" style="padding: 30px 30px 60px 60px;">
+  <tbody>
+    <tr> SubTotal : &nbsp;{{vendor_subtotal}}   </tr>
+    {% for tax,val in vendor_tax_data.items %}
+        {% for i,j in val.items %}
+        <tr>{{tax}}<small>({{i}}%)</small> : &nbsp;<span>{{j}}</span></tr>
+        {% endfor %}
+    {% endfor %}
+    <tr>Grand Total :  &nbsp;{{vendor_grand_total}}</tr>
+  </tbody>
+   </table>
+  <table role="presentation" bgcolor="#C33332" width="100%">
+      <tr>
+        <td align="center" style="padding: 15px 15px; color: #fff;">
+          <p>© {% now "Y" %} BiteBuddy Marketplace, All Rights Reserved.</p>
+          <a href="#" style="color:#fff;">Visit Website</a>      
+        </td>
+      </tr>
+  </table> 
+</div>
+</body>
+</html>

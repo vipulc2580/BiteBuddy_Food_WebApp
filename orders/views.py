@@ -103,24 +103,47 @@ def payments(request,transaction_id,status,payment_method,order_number):
     #Send order confirmation email to the customer
     mail_subject='Thank you for ordering with us!'
     mail_template='orders/order_confirmation_email.html'
+    ordered_food=OrderedFood.objects.filter(order=order)
+    customer_subtotal=0
+    for item in ordered_food:
+        customer_subtotal+=(item.fooditem.price*item.quantity)
+    customer_tax_data={}
+    if order.tax_data:
+        customer_tax_data=json.loads(order.tax_data)
+    
     context={
         'user':request.user,
         'order':order,
         'to_email':order.email,
+        'ordered_food':ordered_food,
+        'customer_subtotal':customer_subtotal,
+        'customer_tax_data':customer_tax_data,
     }
     send_notification(mail_subject,mail_template,context)
-
+    # print('customer email sent')
     # send order receive email to vendor
     mail_subject='You have recieved a new order!'
     mail_template='orders/new_order_received.html'
-    to_emails=list({item.fooditem.vendor.user.email for item in cart_items})
-    context={
-        'order':order,
-        'to_email':to_emails,
-    }
-    send_notification(mail_subject,mail_template,context)
+    vendors={item.fooditem.vendor for item in cart_items}
+    for vendor in vendors:
+        to_emails=vendor.user.email
+        ordered_food_to_vendor=OrderedFood.objects.filter(order=order,fooditem__vendor=vendor)
+        total_cart_amount=order.get_total_by_vendor(vendor)
+        vendor_subtotal=total_cart_amount['subtotal']
+        vendor_grand_total=total_cart_amount['grand_total']
+        vendor_tax_data=total_cart_amount['tax_data']
+        context={
+            'user':request.user,
+            'order':order,
+            'to_email':to_emails,
+            'ordered_food_to_vendor':ordered_food_to_vendor,
+            'vendor_subtotal':vendor_subtotal,
+            'vendor_tax_data':vendor_tax_data,
+            'vendor_grand_total':vendor_grand_total,
+        }
+        send_notification(mail_subject,mail_template,context)
     # clear the cart once the payment is successful
-    # cart_items.delete()
+    cart_items.delete()
     # return the response ( status success or failure)
     response={
         'status':200,
@@ -133,7 +156,7 @@ def payments(request,transaction_id,status,payment_method,order_number):
 def order_complete(request):
     order_number=request.GET.get('order_no')
     transaction_id=request.GET.get('trans_id')
-    print(order_number,transaction_id)
+    # print(order_number,transaction_id)
     try:
         order=Order.objects.get(order_number=order_number,payment__transaction_id=transaction_id,is_ordered=True)
         ordered_food=OrderedFood.objects.filter(order=order)

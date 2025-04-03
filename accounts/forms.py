@@ -1,6 +1,7 @@
 from django import forms 
 from .models import User,UserProfile
 from .validators import allow_only_images_validator,validate_file_size
+from django.contrib.auth.hashers import check_password
 
 class UserForm(forms.ModelForm):
     password=forms.CharField(widget=forms.PasswordInput(),required=True)
@@ -46,3 +47,36 @@ class UserInfoForm(forms.ModelForm):
     class Meta:
         model=User
         fields=['first_name','last_name','phone_number']
+
+
+class ChangePasswordForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput(), required=True)
+    confirm_password = forms.CharField(widget=forms.PasswordInput(), required=True)
+
+    class Meta:
+        model = User
+        fields = ['password', 'confirm_password']
+
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user  # Store the current user instance
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+
+        # Check if the new password is the same as the old password
+        if password and check_password(password, self.user.password):
+            raise forms.ValidationError("The new password cannot be the same as the current password.")
+
+        return password
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+
+        # Check if passwords match
+        if password and confirm_password and password != confirm_password:
+            self.add_error('confirm_password', "Passwords do not match.")
+
+        return cleaned_data

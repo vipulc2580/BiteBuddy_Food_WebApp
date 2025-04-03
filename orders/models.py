@@ -59,8 +59,9 @@ class Order(models.Model):
     def order_placed_to(self):
         return ','.join([i.vendor_name for i in self.vendors.all()])
     
-    def get_total_by_vendor(self):
-        vendor=Vendor.objects.get(user=request_object.user)
+    def get_total_by_vendor(self,vendor=None):
+        if vendor==None:
+            vendor=Vendor.objects.get(user=request_object.user)
         subtotal=0
         tax_data={}
         grand_total=0

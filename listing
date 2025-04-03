@@ -86,3 +86,13 @@ price float
 amount float
 created_at
 updated_at
+
+
+
+# Email Templates 
+Register User Account Verification email(done)
+Register Vendor Account Verification email(done)
+Forgot Password Verification Email (Done)
+Send order confirmation email to customer(done)
+Send order recieved email to vendor(done)
+Restuarant approval email (done)

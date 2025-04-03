@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 # Create your views here.
 from datetime import datetime as dt
-from .forms import UserForm
+from .forms import UserForm,ChangePasswordForm
 from vendor.forms import VendorForm
 from .models import User,UserProfile
 from django.contrib import messages,auth
@@ -14,6 +14,7 @@ from django.contrib.auth.tokens import default_token_generator
 from vendor.models import Vendor
 from django.template.defaultfilters import slugify
 from orders.models import Order
+from django.contrib.auth import update_session_auth_hash
 
 #restrict vendor from accessing customer page
 def check_role_vendor(user):
@@ -158,6 +159,7 @@ def vendorDashboard(request):
     total_revenue=0
     for order in orders:
         total_revenue+=(order.get_total_by_vendor()['grand_total'])
+    total_revenue=round(total_revenue,2)
     current_month=dt.now().month
     current_month_orders=orders.filter(vendors__in=[vendor.id],created_at__month=current_month)
     # print(current_month_orders)
@@ -165,6 +167,7 @@ def vendorDashboard(request):
     for current_month_order in current_month_orders:
         month_revenue+=(current_month_order.get_total_by_vendor()['grand_total'])
     # print(month_revenue)
+    month_revenue=round(month_revenue,2)
     order_count=orders.count()
     if order_count>10:
         orders=orders[:10]
@@ -263,3 +266,25 @@ def reset_password(request):
 
 def custom_403_view(request, exception=None):
     return render(request, '403.html', status=403)
+
+@login_required(login_url='login')
+def change_password(request):
+    is_vendor=True if(request.user.role==1) else False
+    form=ChangePasswordForm(user=request.user)
+    if request.method=='POST':
+        # print('POST request received')
+        form=ChangePasswordForm(user=request.user,data=request.POST)
+        if form.is_valid():
+            # print('new Password',form.cleaned_data['password'])
+            user=request.user
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            update_session_auth_hash(request, user)
+            messages.success(request,'Your password has been changed successfully!.')
+            url='vendorDashboard' if is_vendor else 'custDashboard'
+            return redirect(url)
+    context={
+        'is_vendor':is_vendor,
+        'form':form,
+    }
+    return render(request,'accounts/change_password.html',context)
