@@ -1,6 +1,6 @@
 # BiteBuddy Food WebApp
 
-![BiteBuddy Banner](https://via.placeholder.com/1200x300?text=BiteBuddy+Food+WebApp)  
+![BiteBuddy Banner](https://github.com/vipulc2580/BiteBuddy_Food_WebApp/blob/main/static/assets/extra-images/main-logo1.png)  
 *An innovative food ordering platform that connects hungry customers with their favorite local vendors.*
 
 ## Table of Contents
