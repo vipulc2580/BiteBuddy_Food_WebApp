@@ -3,7 +3,7 @@
 {% block content %}
 
 <!-- Main Section Start -->
-<div class="main-section">
+{% comment %} <div class="main-section">
     <div class="page-section nopadding cs-nomargin" style="margin-top: 0px;padding-top: 60px;padding-bottom: 60px;margin-bottom: 0px;">
         <div class="container">
             <div class="row">
@@ -108,6 +108,79 @@
         </div>
     </div>
 </div>
-<!-- Main Section End -->
+<!-- Main Section End --> {% endcomment %}
+<div class="custom-main-section">
+    <div class="custom-page-section">
+        <div class="custom-container">
+            <div class="custom-row">
+                <div class="custom-col-12">
+                    <div class="custom-user-dashboard">
+                        <div class="custom-user-holder">
+                            <h4 class="text-center custom-welcome-text">WELCOME TO FOODONLINE</h4>
+                            <p class="text-center custom-subtext">Register yourself and explore BiteBuddy—your food buddy.</p>
+                            <hr>
+                            <div class="custom-form-holder">
+                                <form action="{% url 'register_user' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="custom-form-row">
+                                        <div class="custom-col-6">
+                                            <div class="custom-field-holder">
+                                                <label>First name</label>{{ form.first_name }}
+                                            </div>
+                                        </div>
+                                        <div class="custom-col-6">
+                                            <div class="custom-field-holder">
+                                                <label>Last name</label>{{ form.last_name }}
+                                            </div>
+                                        </div>
+                                        <div class="custom-col-6">
+                                            <div class="custom-field-holder">
+                                                <label>Email Address</label>{{ form.email }}
+                                            </div>
+                                        </div>
+                                        <div class="custom-col-6">
+                                            <div class="custom-field-holder">
+                                                <label>Username</label>{{ form.username }}
+                                            </div>
+                                        </div>
+                                        <div class="custom-col-6">
+                                            <div class="custom-field-holder">
+                                                <label>Password</label>{{ form.password }}
+                                            </div>
+                                        </div>
+                                        <div class="custom-col-6">
+                                            <div class="custom-field-holder">
+                                                <label>Confirm Password</label>{{ form.confirm_password }}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <ul class="custom-errorlist">
+                                        {% for field in form %}
+                                            {% if field.errors %}
+                                                {% for error in field.errors %}
+                                                    <li>{{ error }}</li>  <!-- No more bullet points! -->
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if form.non_field_errors %}<li>{{ form.non_field_errors }}</li>{% endif %}
+                                    </ul>
+
+                                    <div class="custom-submit-holder">
+                                        <input type="submit" value="Register" class="custom-submit-btn">
+                                    </div>
+
+                                    <div class="custom-alert-holder">
+                                        {% include 'includes/alerts.html' %}
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

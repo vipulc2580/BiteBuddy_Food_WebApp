@@ -1,56 +1,59 @@
 {% load static %}
-<div class="wrapper">
-<header id="header">
-    <div class="main-header">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-                    <div class="logo">
-                        <figure>
-                            <a href="{% url 'home'%}" class="light-logo">
-                                <img src="{% static 'assets/extra-images/main-logo.png'%}" alt="FoodBakery">
-                            </a>
-                        </figure>
-                    </div>
-                    
-                    
-                    <div class="main-location ">
-                        <ul>
-                            <li class="location-has-children choose-location">
-                                <form action="#">
-                                    <input type="text" value="" name="location" placeholder="Enter your delivery location" autocomplete="off">
-                                    <span id="foodbakery_radius_location_open" class="foodbakery-radius-location"><i class="icon-target5"></i></span>
-                                </form>
-                                
-                            </li>
-                        </ul>
-                        </div>
-                </div>
-                <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                    {% if not user.is_authenticated%}
-                    <div class="login-option">
-                        <a class="btn btn-outline-danger text-uppercase font-weight-bold mr-0 mt-0"  href="{%url 'marketplace'%}">Marketplace</a>
-                        <a class="cs-color cs-popup-joinus-btn login-popup d-inline-block mr-0"  href="{%url 'login'%}">Login</a>
-                        /<a href="{% url 'register_user'%}" class="cs-color cs-popup-joinus-btn login-popup ml-0">Register</a>
-                        <a class="get-start-btn d-inline-block" href="{% url 'register_vendor'%}">Register Restaurant</a>
-                    </div>
-                    {% else %}
-                    <div class="login-option">
-                        
-                        <a class="btn btn-outline-danger text-uppercase font-weight-bold mr-2 mt-0"  
-                             href="{% url 'marketplace' %}">Marketplace</a>
+<header class="custom-navbar">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center justify-content-between">
+            <!-- Logo -->
+            <a href="{% url 'home' %}" class="custom-logo">
+                <img src="{% static 'assets/extra-images/main-logo.png' %}" alt="BiteBuddy">
+            </a>
 
-                        <a href="{% url 'cart' %}" class="ml-3">  <!-- Adjust ml-3 for spacing -->
-                            <i class="fa fa-shopping-cart text-danger" style="font-size:20px;"></i>
-                            <span class="badge bg-danger" id="cart_counter" 
-                                style="border-radius:50px; position:relative; bottom:10px; left:-5px;">{{cart_count}}</span>
-                        </a>
-                        <a class="cs-color cs-popup-joinus-btn login-popup d-inline-block mr-0"  href="{%url 'myAccount'%}">My account</a>
-                        <a class="cs-color cs-popup-joinus-btn login-popup d-inline-block mr-0 text-danger"  href="{%url 'logout'%}">Logout</a>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
+            <!-- Navigation Menu (Hidden on Mobile) -->
+            <nav class="custom-nav d-none d-lg-flex">
+                <a href="{% url 'marketplace' %}" class="custom-nav-link">Marketplace</a>
+                
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'login' %}" class="custom-nav-link">Login</a>
+                    <a href="{% url 'register_user' %}" class="custom-nav-link">Register</a>
+                    <a href="{% url 'register_vendor' %}" class="custom-btn">Register Restaurant</a>
+                {% else %}
+                    <a href="{% url 'cart' %}" class="custom-cart">
+                        <i class="fa fa-shopping-cart"></i>
+                        <span id="cart_counter">{{ cart_count }}</span>
+                    </a>
+                    <a href="{% url 'myAccount' %}" class="custom-nav-link">My Account</a>
+                    <a href="{% url 'logout' %}" class="custom-nav-link custom-logout">Logout</a>
+                {% endif %}
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button class="custom-menu-btn d-lg-none" id="menu-toggle">
+                <i class="fa fa-bars"></i>
+            </button>
         </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <div class="custom-mobile-menu d-lg-none" id="mobile-menu">
+            <a href="{% url 'marketplace' %}" class="custom-mobile-link">Marketplace</a>
+            
+            {% if not user.is_authenticated %}
+                <a href="{% url 'login' %}" class="custom-mobile-link">Login</a>
+                <a href="{% url 'register_user' %}" class="custom-mobile-link">Register</a>
+                <a href="{% url 'register_vendor' %}" class="custom-btn custom-register-btn">Register Restaurant</a>
+            {% else %}
+                <a href="{% url 'cart' %}" class="custom-mobile-link d-flex align-items-center justify-content-center">
+                    <i class="fa fa-shopping-cart me-2"></i> Cart 
+                    <span id="cart_counter" class="cart-badge">{{ cart_count }}</span>
+                </a>
+                <a href="{% url 'myAccount' %}" class="custom-mobile-link">My Account</a>
+                <a href="{% url 'logout' %}" class="custom-mobile-link custom-logout">Logout</a>
+            {% endif %}
+        </div>
+        
     </div>
-</header>
+
+<!-- Mobile Menu Toggle Script -->
+<script>
+    document.getElementById("menu-toggle").addEventListener("click", function() {
+        document.getElementById("mobile-menu").classList.toggle("active");
+    });
+</script>

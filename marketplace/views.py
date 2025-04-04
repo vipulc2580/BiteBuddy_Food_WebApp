@@ -141,7 +141,7 @@ def cart(request):
         'cart_items':cart_items
     }
     # print(cart_items)
-    return render(request,'marketplace/cart.html',context)
+    return render(request,'marketplace/custom_cart.html',context)
 
 @login_required(login_url='login')
 def delete_cart(request,cart_id):
